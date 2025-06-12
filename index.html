@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Weather App</title>
+  <style>
+    body {
+      background-color: #a8e6cf;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      padding: 30px;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    .weather-info {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+
+    input {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid white;
+      color: white;
+      font-size: 18px;
+      padding: 5px;
+      outline: none;
+    }
+
+    .search-button {
+      padding: 8px 15px;
+      margin-left: 10px;
+      border-radius: 20px;
+      border: 2px solid white;
+      background-color: white;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Weather App</h1>
+  <div class="weather-info" id="weather">
+    <div id="temp" style="font-size: 60px;">--</div>
+    <div id="city">City</div>
+    <div id="time">--:-- --</div>
+    <div id="desc" style="font-size: 14px;">--</div>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <input type="text" id="cityInput" placeholder="Enter city name">
+    <button class="search-button" onclick="getWeather()">Search Button</button>
+  </div>
+
+  <script>
+  async function getWeather() {
+    const city = document.getElementById("cityInput").value.trim();
+    const apiKey = "71148eed865d8af853150bda70d7ae63"; // or your created one
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.cod === 200) {
+        const temp = data.main.temp;
+        const cityName = data.name;
+        const description = data.weather[0].description;
+        const now = new Date();
+        const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+
+        document.getElementById("temp").innerText = `${Math.round(temp)}°C`;
+        document.getElementById("city").innerText = cityName;
+        document.getElementById("desc").innerText = description;
+        document.getElementById("time").innerText = `${time} ${day}`;
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      alert("Network error or invalid response.");
+      console.error(error);
+    }
+  }
+</script>
+
+</body>
+</html>
